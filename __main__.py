@@ -37,7 +37,7 @@ def main():
             topolgy[i][j] = Neuron(l3File_max, l3File_min, int(first_line[1]))
 
     # print(topolgy)
-    #print(topolgy[0][0].EucDistance(data[0], topolgy[0][0].initialWeights()))
+    # print(topolgy[0][0].EucDistance(data[0], topolgy[0][0].initialWeights()))
 
     
     # print(l3File_max, l3File_min)
@@ -81,6 +81,11 @@ def main():
                 # print(guass)
                 update_weight = topolgy[i][j].initialWeights() + updateLR * guass * (new_data - topolgy[i][j].initialWeights()) 
                 topolgy[i][j].updateWeights(update_weight)
+
+                # if the neuron is activeated
+                # check the data classifier 
+                # set that to all the neighbouring as that classifier
+                
 
         if e == 1:
             print('data number: ', rand)

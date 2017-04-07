@@ -7,6 +7,7 @@ class Neuron(object):
         self.l3min = l3min
         self.sizeofWeightVector = sizeofWeightVector
         self.weights = np.random.uniform(low=self.l3min, high=self.l3max, size=(self.sizeofWeightVector,))
+        self.classification = None
 
 
     def updateWeights(self, weights):
