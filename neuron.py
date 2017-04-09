@@ -21,3 +21,10 @@ class Neuron(object):
     def EucDistance(self, inputVector, Weights):
         # print(inputVector, Weights)
         return np.sqrt(np.sum((inputVector - Weights)**2))
+
+
+    def getClassify(self):
+        return self.classification
+
+    def updateClassify(self, classify):
+        self.classification = classify
