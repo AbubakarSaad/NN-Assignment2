@@ -6,6 +6,10 @@ from functions import Functions
 from random import randint
 from graphics import *
 
+"""
+author: Abubakar Saad
+"""
+
 def main():
 
     learningRate = 4.0
@@ -22,6 +26,7 @@ def main():
     # os.path.dirname gets the dir path for this file
     filepath = "c:\\Users\\Abu\\Documents\\ANN\\Assignment2\\"
     first_line = []
+
     # Get the first line in python
     with open(filename) as f:
         first_line = f.readline().split(' ')
@@ -29,9 +34,12 @@ def main():
     # cols
     cols = int(first_line[1]) + 1
     
+    # To pick random samples from data set
     dataNum = np.arange(0, 53)
     np.random.shuffle(dataNum)
     print(dataNum, len(dataNum))
+
+    # holds all the samples from 1 file
     data = np.loadtxt(filename, delimiter=' ', dtype='float', skiprows=1, usecols=range(0, cols))
 
     indexDel = np.array([])
@@ -44,10 +52,11 @@ def main():
         testDataArr = np.append(testDataArr, data[ts])
         dataNum = np.delete(dataNum, dn)
 
-    
+    # holds 15% of the data for testing
     testDataArr = np.split(testDataArr, 8)
     print(len(testDataArr))
 
+    # find the min and max to generate the weights of nodes
     l3File_max = np.amax(data)
     l3File_min = np.amin(data)
 
@@ -58,10 +67,9 @@ def main():
             topolgy[i][j] = Neuron(l3File_max, l3File_min, int(first_line[1]))
 
 
-    # accuracy
     accuracy = 0
+    # learning rate to be updated
     updateLR = learningRate
-
     lamda = epoch / initRadius
     
     
@@ -69,10 +77,10 @@ def main():
         # rand = randint(0, 52)
         rand = randint(0, 44)
         print('------------------epoch:---------------', e)
+        # store the distances of BMU
         distancesBMU = np.empty([15, 15], dtype=float)
         
         # from dataNum === random samples
-
         rs = dataNum[rand]
         # print(rs)
         new_data = np.delete(data[rs], 0)
@@ -83,20 +91,13 @@ def main():
             for j in range(len(distancesBMU)):
                 distancesBMU[i][j] = topolgy[i][j].EucDistance(new_data, topolgy[i][j].initialWeights())
 
-        # BMU == MIN
+        # BMU 
         BMU = np.amin(distancesBMU)
-        
         coordBMU = np.argwhere( distancesBMU == BMU )
         coordBMU = coordBMU.flatten()
-    
+        # BMU coordss
         BMUx = coordBMU[0]
         BMUy = coordBMU[1]
-
-        # just get the min of the BMU.x and currentNode.x
-        # then compare that to currentNode.x +- 15
-        # and do the same for y again too
-
-        
 
         radius = Functions().neighbourhood(initRadius, e, lamda)
         print('Radius: ', radius)
@@ -105,18 +106,21 @@ def main():
         # double for loops to update all the map nodes weights
         for i in range(len(topolgy)):
             for j in range(len(topolgy)):
+                # dist from BMU to current Node
                 dist = np.sqrt((BMUx - i)**2 + (BMUy - j)**2)
                 guass = Functions().guassin(radius, dist)
                 mexicanHat = Functions().mexicanhat(radius, dist)
-                # print(mexicanHat)
+                # update the weight
                 update_weight = topolgy[i][j].initialWeights() + updateLR * mexicanHat * (new_data - topolgy[i][j].initialWeights()) 
                 topolgy[i][j].updateWeights(update_weight)
                 topolgy[BMUx][BMUy].updateClassify(data[rs][0])
                 
+                # update the neighbours with the same classifier as the BMU
                 if (dist < radius): 
                     topolgy[i][j].updateClassify(data[rs][0])
         
         updateLR = Functions().updateLR(learningRate, e, lamda)
+        # test during the training also, if the optimial configuration is found, break out the loop
         if (accuracy/len(data) > 0.89):
             break
         else:
@@ -135,7 +139,7 @@ def main():
         print()
 
     print("------------------------------------- Testing ---------------------------------")
-    
+    # draws the topolgy on the GUI
     for i in range(len(topolgy)):
         for j in range(len(topolgy)):
             # 1 is bad motor
@@ -158,6 +162,8 @@ def main():
     win.getMouse()
     win.close()
 
+
+# testing method 
 def testing(data, topolgy):
     BMUarray = np.array([])
     accuracy = 0
@@ -193,8 +199,7 @@ def testing(data, topolgy):
             if(data[d][0] == topolgy[BMUxT][BMUyT].getClassify()):
                     accuracy += 1
         else:
-            same = np.where(BMUarray == codBMU)
-            #print('same==', same)
+            # increase the zeros or ones or the accuracy if the data vector has the same classifier as the activated BMU
             if(data[d][0] == topolgy[BMUxT][BMUyT].getClassify()):
                 if(codBMU in BMUarray):
                     accuracy += 1

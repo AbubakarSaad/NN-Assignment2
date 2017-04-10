@@ -5,10 +5,11 @@ class Functions():
 
     def neighbourhood(self, radius, numIteration, timeConstant):
         return radius * np.exp(-(numIteration / timeConstant))
-
+    
     def guassin(self, radius, dist):
         return np.exp(-(dist**2)/(2*(radius**2)))
     
+    # updating the learning rate
     def updateLR(self, learningRate, numIteration, timeConstant):
         return learningRate * np.exp(-(numIteration / timeConstant))
 
